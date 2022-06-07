@@ -15,8 +15,9 @@ $(NAME): $(OBJECTS)
 	$(GCC) -c $(CFLAGS) $?
 
 clean:
-	rm -rf philo $(OBJECTS)
+	rm -rf $(OBJECTS)
 
 re: clean all
 
 fclean: clean
+	rm -rf $(NAME)
