@@ -27,15 +27,23 @@ int init(int argc, char **argv, t_settings *settings)
 
 void    *life(void *philo)
 {
-    struct timeval current_time;
     t_philo *p2;
+    int     round;
 
+    round = 0;
     p2 = (t_philo *)philo;
-    while (1)
+    while (1 && ++round)
     {
         gettimeofday(&current_time, NULL);
-        printf("%ld: Philo #%d says hi\n", current_time.tv_sec * 1000 + current_time.tv_usec/1000, p2->chair);
-        usleep(10000);
+        while(pthread_mutex_lock(&p2->fork) != 0)
+        {
+            printf("%ld #%d has taken a fork\n", , p2->chair);
+            gettimeofday(&current_time, NULL);
+            printf("%ld #%d is eating\n", current_time.tv_sec * 1000 + current_time.tv_usec/1000, p2->chair);
+            usleep(philo->eat_time);
+            pthread_mutex_unlock(&p2->fork)
+            usleep(philo->eat_time);
+        }
     }
 }
 
@@ -56,6 +64,9 @@ int main(int argc, char **argv)
     while (++i < settings.philo_num)
     {
         settings.philos[i].chair = i + 1;
+        settings.philos[i].eat_time = settings.eat_time
+        settings.philos[i].sleep_time = settings.sleep_time
+        pthread_mutex_init(&settings.philos[i]->fork, NULL); //init fork
         pthread_create(&threads[i], NULL, life, (void *)&settings.philos[i]);
     }
     i = -1;
@@ -63,6 +74,7 @@ int main(int argc, char **argv)
     while (++i < settings.philo_num)
     {
         pthread_join(threads[i],NULL);
+        printf("joined thread %d\n",i);
     }
     // start threads for each philo
     // each philo display time 

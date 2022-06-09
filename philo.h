@@ -5,6 +5,7 @@ typedef struct s_philo
 {
 	int					chair;
 	long				eat_time;
+	int					sleep_time;
 	int					holds_fork1;
 	int					holds_fork2;
 	int					meals;
@@ -23,7 +24,8 @@ typedef struct s_settings
 	t_philo *philos;
 }		t_settings;
 
-int	ft_atoi(const char *str);
-int ft_isnum(char *str);
+int			ft_atoi(const char *str);
+int			ft_isnum(char *str);
+long int	get_time(void);
 
 #endif
