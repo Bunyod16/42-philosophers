@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include "philo.h"
 #include <stdio.h>
-#include <sys/time.h>
 #include <stdlib.h>
 
 int init(int argc, char **argv, t_settings *settings)
@@ -25,26 +24,25 @@ int init(int argc, char **argv, t_settings *settings)
     return (1);
 }
 
-void    *life(void *philo)
+void    *life(void *philo_arg)
 {
-    t_philo *p2;
-    int     round;
+    t_philo     *philo;
+    int         round;
 
     round = 0;
-    p2 = (t_philo *)philo;
+    philo = (t_philo *)philo_arg;
     while (1 && ++round)
     {
-        gettimeofday(&current_time, NULL);
-        while(pthread_mutex_lock(&p2->fork) != 0)
-        {
-            printf("%ld #%d has taken a fork\n", , p2->chair);
-            gettimeofday(&current_time, NULL);
-            printf("%ld #%d is eating\n", current_time.tv_sec * 1000 + current_time.tv_usec/1000, p2->chair);
-            usleep(philo->eat_time);
-            pthread_mutex_unlock(&p2->fork)
-            usleep(philo->eat_time);
-        }
+        pthread_mutex_lock(&philo->fork);
+        printf("%ld #%d has taken a fork\n", get_time(), philo->chair);
+        printf("%ld #%d is eating\n", get_time(), philo->chair);
+        usleep(philo->eat_time);
+        printf("%ld #%d is sleeping\n", get_time(), philo->chair);
+        usleep(philo->sleep_time);
+        printf("%ld #%d is thinking\n", get_time(), philo->chair);
+        pthread_mutex_unlock(&philo->fork);
     }
+    return (NULL);
 }
 
 int main(int argc, char **argv)
@@ -64,9 +62,9 @@ int main(int argc, char **argv)
     while (++i < settings.philo_num)
     {
         settings.philos[i].chair = i + 1;
-        settings.philos[i].eat_time = settings.eat_time
-        settings.philos[i].sleep_time = settings.sleep_time
-        pthread_mutex_init(&settings.philos[i]->fork, NULL); //init fork
+        settings.philos[i].eat_time = settings.eat_time;
+        settings.philos[i].sleep_time = settings.sleep_time;
+        pthread_mutex_init(&(settings.philos[i]).fork, NULL); //init fork
         pthread_create(&threads[i], NULL, life, (void *)&settings.philos[i]);
     }
     i = -1;

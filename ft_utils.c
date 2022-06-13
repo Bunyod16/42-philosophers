@@ -1,4 +1,5 @@
 #include <limits.h>
+#include <sys/time.h>
 
 int ft_isnum(char *str)
 {
@@ -38,6 +39,10 @@ int	ft_atoi(const char *str)
 
 long int	get_time(void)
 {
-    struct timeval current_time;
-    return (current_time.tv_sec * 1000 + current_time.tv_usec/1000);
+    struct timeval	current_time;
+	long int		ret;
+
+	gettimeofday(&current_time, NULL);
+	ret = current_time.tv_sec * 1000 + current_time.tv_usec/1000;
+    return (ret);
 }

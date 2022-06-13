@@ -11,6 +11,7 @@ typedef struct s_philo
 	int					meals;
 	pthread_mutex_t		fork; //need to destroy the mutex
 	pthread_t			death_tracker;
+	t_settings			*settings;
 }	t_philo;
 
 typedef struct s_settings
