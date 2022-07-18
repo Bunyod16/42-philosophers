@@ -15,32 +15,48 @@ int init(int argc, char **argv, t_settings *settings)
             return (0);
     settings->args = argc - 1;
     settings->philo_num = ft_atoi(argv[1]);        
-    settings->die_time = ft_atoi(argv[2]);
-    settings->eat_time = ft_atoi(argv[3]);
-    settings->sleep_time = ft_atoi(argv[4]);
+    settings->die_time = ft_atoi(argv[2]) * 1000;
+    settings->eat_time = ft_atoi(argv[3]) * 1000;
+    settings->sleep_time = ft_atoi(argv[4]) * 1000;
     settings->philos = malloc(sizeof(t_philo) * settings->philo_num);
     if (argc == 6)
         settings->stop_after = ft_atoi(argv[5]);
     return (1);
 }
 
+// algo: odd locks its own and neigbours
+// even locks its neighbours then its own
 void    *life(void *philo_arg)
 {
     t_philo     *philo;
-    int         round;
+    t_philo     *neighbour;
+    int         i;
 
-    round = 0;
     philo = (t_philo *)philo_arg;
-    while (1 && ++round)
+    i = philo->chair - 1;
+    if (philo->chair == 1)
+        i = philo->settings->philo_num;
+    neighbour = &(philo->settings->philos[i - 1]); 
+    while (philo->settings->dead_count == 0 && ++i)
     {
-        pthread_mutex_lock(&philo->fork);
-        printf("%ld #%d has taken a fork\n", get_time(), philo->chair);
+        if (philo->chair % 2 == 0)
+        {
+            pthread_mutex_lock(&neighbour->fork);
+            pthread_mutex_lock(&philo->fork);
+        }
+        else
+        {
+            pthread_mutex_lock(&philo->fork);
+            pthread_mutex_lock(&neighbour->fork);
+        }
+        printf("%ld #%d has taken a fork\n", get_time(), philo->chair); 
         printf("%ld #%d is eating\n", get_time(), philo->chair);
-        usleep(philo->eat_time);
-        printf("%ld #%d is sleeping\n", get_time(), philo->chair);
-        usleep(philo->sleep_time);
-        printf("%ld #%d is thinking\n", get_time(), philo->chair);
+        usleep(philo->settings->eat_time);
         pthread_mutex_unlock(&philo->fork);
+        pthread_mutex_unlock(&neighbour->fork);
+        printf("%ld #%d is sleeping\n", get_time(), philo->chair);
+        usleep(philo->settings->sleep_time);
+        printf("%ld #%d is thinking\n", get_time(), philo->chair);
     }
     return (NULL);
 }
@@ -58,24 +74,20 @@ int main(int argc, char **argv)
     }
     i = -1;
     threads = malloc(sizeof(pthread_t) * settings.philo_num);
-    printf("%d num\n", settings.philo_num);
     while (++i < settings.philo_num)
     {
         settings.philos[i].chair = i + 1;
         settings.philos[i].eat_time = settings.eat_time;
         settings.philos[i].sleep_time = settings.sleep_time;
+        settings.philos[i].settings = &settings;
         pthread_mutex_init(&(settings.philos[i]).fork, NULL); //init fork
         pthread_create(&threads[i], NULL, life, (void *)&settings.philos[i]);
     }
     i = -1;
-    printf("test");
     while (++i < settings.philo_num)
     {
         pthread_join(threads[i],NULL);
         printf("joined thread %d\n",i);
     }
-    // start threads for each philo
-    // each philo display time 
-    // each philo check status of next fork
     printf("%s", argv[0]);
 }

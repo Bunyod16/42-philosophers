@@ -1,6 +1,8 @@
 #ifndef PHILO_H
 # define PHILO_H
 
+typedef struct s_settings t_settings;
+
 typedef struct s_philo
 {
 	int					chair;
@@ -22,6 +24,7 @@ typedef struct s_settings
 	int eat_time;
 	int sleep_time;
 	int stop_after;
+	int dead_count;
 	t_philo *philos;
 }		t_settings;
 

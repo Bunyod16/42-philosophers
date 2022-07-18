@@ -1,4 +1,4 @@
-GCC=gcc -Wall -Werror -Wextra
+GCC=gcc -Wall -Werror -Wextra -fsanitize=thread
 CFLAGS=-pthread
 SOURCES=main.c \
 		ft_utils.c
