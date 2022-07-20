@@ -1,7 +1,9 @@
-GCC=gcc -Wall -Werror -Wextra -fsanitize=thread
+GCC=gcc -Wall -Werror -Wextra
 CFLAGS=-pthread
 SOURCES=main.c \
-		ft_utils.c
+		ft_utils.c \
+		philo_life.c
+
 NAME=philo
 MAKEFLAGS += --no-print-directory
 OBJECTS = $(SOURCES:.c=.o)

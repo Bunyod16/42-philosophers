@@ -19,13 +19,12 @@ int init(int argc, char **argv, t_settings *settings)
     settings->eat_time = ft_atoi(argv[3]) * 1000;
     settings->sleep_time = ft_atoi(argv[4]) * 1000;
     settings->philos = malloc(sizeof(t_philo) * settings->philo_num);
+    settings->dead_count = 0;
     if (argc == 6)
         settings->stop_after = ft_atoi(argv[5]);
     return (1);
 }
 
-// algo: odd locks its own and neigbours
-// even locks its neighbours then its own
 void    *life(void *philo_arg)
 {
     t_philo     *philo;
@@ -50,10 +49,7 @@ void    *life(void *philo_arg)
             pthread_mutex_lock(&neighbour->fork);
         }
         printf("%ld #%d has taken a fork\n", get_time(), philo->chair); 
-        printf("%ld #%d is eating\n", get_time(), philo->chair);
-        usleep(philo->settings->eat_time);
-        pthread_mutex_unlock(&philo->fork);
-        pthread_mutex_unlock(&neighbour->fork);
+        philo_eat(philo, neighbour);
         printf("%ld #%d is sleeping\n", get_time(), philo->chair);
         usleep(philo->settings->sleep_time);
         printf("%ld #%d is thinking\n", get_time(), philo->chair);
@@ -80,6 +76,7 @@ int main(int argc, char **argv)
         settings.philos[i].eat_time = settings.eat_time;
         settings.philos[i].sleep_time = settings.sleep_time;
         settings.philos[i].settings = &settings;
+        settings.philos[i].last_eaten = get_time();
         pthread_mutex_init(&(settings.philos[i]).fork, NULL); //init fork
         pthread_create(&threads[i], NULL, life, (void *)&settings.philos[i]);
     }
