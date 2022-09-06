@@ -41,6 +41,7 @@ void    wait_all_philo_eat(t_philo *philo)
     int global_round;
 
     i = 0;
+    pen(philo->settings, get_time(), philo->chair, "started waiting for all\n", 0);
     pthread_mutex_lock(&(philo->settings->roundlock));
     global_round = get_round(philo->settings, false);
     pthread_mutex_unlock(&(philo->settings->roundlock));
@@ -54,7 +55,10 @@ void    wait_all_philo_eat(t_philo *philo)
         }
         else
             pthread_mutex_unlock(&(philo->settings->philos[i].roundlock));
+        // printf("waiting %d\n",i);
     }
+    pen(philo->settings, get_time(), philo->chair, "finished waiting for all\n", 0);
+
 }
 
 void    philo_eat(t_philo *philo, t_philo *neighbour, int round)
@@ -92,7 +96,7 @@ static long time_till_eat(t_philo *philo, int round)
 	i = 0;
 	if (philo->settings->philo_num == 1)
 		return (LONG_MAX);
-	while (philo->settings->eat_queue[philo->chair][round] != 1)
+	while (philo->settings->eat_queue[philo->chair][round % philo->settings->eat_rounds] != 1)
 	{
 		round++;
 		if (round == philo->settings->eat_rounds)
@@ -116,6 +120,7 @@ void    *life(void *philo_arg)
 	monitor(philo->last_eaten, time_till_eat(philo, 0), philo, NULL);
 	while (philo->settings->stop_after == -1 || philo->settings->stop_after > philo->meals)
 	{
+        printf("START ROUND %d philo #%d\n", philo->eat_round, philo->chair);
 		if (philo->settings->eat_queue[philo->chair][philo->eat_round % philo->settings->eat_rounds] == 1)
 		{
 			pthread_mutex_lock(&neighbour->fork);
@@ -129,7 +134,7 @@ void    *life(void *philo_arg)
 			|| (philo->eat_round % philo->settings->eat_rounds > 0 
 				&& philo->settings->eat_queue[philo->chair][(philo->eat_round % philo->settings->eat_rounds) - 1] != 0))
 		{
-			monitor(philo->last_eaten, time_till_eat(philo, philo->eat_round), philo, "is thinking\n");
+			monitor(philo->last_eaten, time_till_eat(philo, philo->eat_round), philo, "is THinking\n");
 			pen(philo->settings, get_time(), philo->chair, "is thinking\n", 0);
             pthread_mutex_lock(&(philo->roundlock));
             philo->eat_round++;
@@ -139,6 +144,7 @@ void    *life(void *philo_arg)
             philo->eat_round++;
         //tasks done
         //wait for global round to increase
+        printf("stuckin %d\n", philo->chair);
 		while (usleep(1000) == 0)
         {
             pthread_mutex_lock(&(philo->settings->roundlock));
@@ -148,6 +154,7 @@ void    *life(void *philo_arg)
             pthread_mutex_unlock(&(philo->settings->roundlock));
         }
         pthread_mutex_unlock(&(philo->settings->roundlock));
+        printf("stuckout %d\n", philo->chair);
 	}
 	return (NULL);
 }
