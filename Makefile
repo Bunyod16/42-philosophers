@@ -2,16 +2,17 @@ GCC=gcc -Wall -Werror -Wextra
 CFLAGS=-pthread
 SOURCES=main.c \
 		ft_utils.c \
-		philo_life.c
+		philo_life.c \
+		assign_eat.c
 
 NAME=philo
 MAKEFLAGS += --no-print-directory
 OBJECTS = $(SOURCES:.c=.o)
-
+DEBUG=
 all: $(NAME)
 
 $(NAME): $(OBJECTS)
-	$(GCC) $(CFLAGS) $(OBJECTS) -o $(NAME)
+	$(GCC) $(DEBUG) $(CFLAGS) $(OBJECTS) -o $(NAME)
 
 %.o: %.c
 	$(GCC) -c $(CFLAGS) $?
