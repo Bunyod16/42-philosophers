@@ -6,7 +6,7 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/20 22:48:16 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/06 18:14:50 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/06 20:19:37 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,6 @@ void	pen(t_settings *settings, long timestamp, int philo_num, const char *action
 int	get_round(t_settings *settings, bool increase)
 {
 	if (increase == true)
-	{
 		settings->current_round += 1;
-		printf("INCREASED ROUND\n");
-	}
 	return (settings->current_round);
 }
