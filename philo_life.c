@@ -35,21 +35,20 @@ static long time_till_eat(t_philo *philo, int round, bool sleep)
 	return (i * (philo->eat_time / 1000));
 }
 
+//TODO: fix sleep time
 void    monitor(long last_eat_time, long action_time, t_philo *philo, const char *action)
 {
-    long dif;
     long now;
     long die_at;
 
     now = get_time();
-    die_at = last_eat_time + philo->settings->die_time / 1000;
-    dif = die_at - (now + action_time);
+    die_at = last_eat_time + (philo->settings->die_time / 1000);
     if (now + action_time > die_at || action_time == LONG_MAX)
     {
         if (action != NULL)
             pen(philo->settings, get_time(), philo->chair, action, 0);
         if (action_time != LONG_MAX)
-            usleep(last_eat_time + philo->settings->die_time - now);
+            usleep(now - die_at);
         pen(philo->settings, get_time(), philo->chair, "died\n", 1);
         exit (3);
     }
@@ -84,13 +83,13 @@ void    philo_eat(t_philo *philo, t_philo *neighbour, int round)
     int i;
 
     philo->last_eaten = get_time();
-    monitor(philo->last_eaten, philo->eat_time, philo, "is eating\n");
+    monitor(philo->last_eaten, philo->eat_time / 1000, philo, "is eating\n");
     pen(philo->settings, get_time(), philo->chair, "is eating\n", 0);
     ++philo->meals;
     usleep(philo->settings->eat_time);
     pthread_mutex_unlock(&philo->fork);
     pthread_mutex_unlock(&neighbour->fork);
-    monitor(philo->last_eaten, philo->settings->sleep_time, philo, "is sleeping\n");
+    monitor(philo->last_eaten, philo->sleep_time / 1000, philo, "is sleeping\n");
 	pen(philo->settings, get_time(), philo->chair, "is sleeping\n", 0);
     i = philo->settings->philo_num - 1;
     while (philo->settings->eat_queue[i][round % philo->settings->eat_rounds] != 1)
@@ -137,11 +136,11 @@ void    *life(void *philo_arg)
 				&& philo->settings->eat_queue[philo->chair][(philo->eat_round % philo->settings->eat_rounds) - 1] != 0))
 		    {
                 printf("#%d TIME TILL EAT: %ld\n",philo->chair, time_till_eat(philo, philo->eat_round, false));
-                printf("#%d LAST EATEN: %ld\n",philo->chair, philo->last_eaten);
-                printf("#%d TIME TO DIE: %d\n",philo->chair, philo->settings->die_time / 1000);
-                printf("#%d CURR TIME: %ld\n",philo->chair, get_time());
+                // printf("#%d LAST EATEN: %ld\n",philo->chair, philo->last_eaten);
+                // printf("#%d TIME TO DIE: %d\n",philo->chair, philo->settings->die_time / 1000);
+                // printf("#%d CURR TIME: %ld\n",philo->chair, get_time());
                 printf("#%d TIME TO LIVE: %ld\n",philo->chair, philo->last_eaten + (philo->settings->die_time / 1000) - get_time());
-			    monitor(philo->last_eaten, time_till_eat(philo, philo->eat_round, false) - philo->sleep_time, philo, "is thinking\n");//check without deducting time to sleep on the first round
+			    monitor(philo->last_eaten, time_till_eat(philo, philo->eat_round, false) - (philo->sleep_time / 1000), philo, "is thinking\n");//check without deducting time to sleep on the first round
 			    pen(philo->settings, get_time(), philo->chair, "is thinking\n", 0);
             }    
             pthread_mutex_lock(&(philo->roundlock));
