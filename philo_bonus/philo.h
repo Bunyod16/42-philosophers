@@ -32,7 +32,7 @@ typedef struct s_settings
 	int **eat_queue;
 	long start_time;
 	sem_t fork_sets;
-	pthread_mutex_t	pen;
+	sem_t	pen;
 	t_philo *philos;
 }		t_settings;
 

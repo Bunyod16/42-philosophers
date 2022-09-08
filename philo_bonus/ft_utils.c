@@ -65,7 +65,7 @@ long int	get_time(void)
 
 void	pen(t_settings *settings, long timestamp, int philo_num, const char *action, int flag)
 {
-	pthread_mutex_lock(&settings->pen);
+	sem_wait(&settings->pen);
 	printf("%ld #%d %s", timestamp - settings->start_time, philo_num, action);
 	if (flag == 0)
 		pthread_mutex_unlock(&settings->pen);

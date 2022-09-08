@@ -85,7 +85,6 @@ int main(int argc, char **argv)
 		return (0);
 	}
 	init_eat_rounds(&settings);
-	pthread_mutex_init(&(settings.pen), NULL);
 	i = -1;
 	while (++i < settings.philo_num)
 	{
@@ -97,9 +96,12 @@ int main(int argc, char **argv)
 		settings.philos[i].eat_round = 0;
 		settings.philos[i].last_eaten = get_time();
 		pid = fork();
-		life(&(settings.philos[i]));
+		if (pid != 0)
+			life(&(settings.philos[i]));
 	}
 	if (pid == 0)
 		while ((wpid = wait(&status)) > 0);
 	ft_cleanup(&settings);
+	printf("EXITED\n");
+	exit (1);
 }
