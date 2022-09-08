@@ -1,3 +1,6 @@
-philo.pdf
+*.DS_Store
+*.txt
 *.o
-philo
+*.pdf
+philo/philo
+philo_bonus/philo_bonus

@@ -13,7 +13,7 @@ DEBUG=
 all: $(NAME)
 
 $(NAME): $(OBJECTS)
-	$(GCC) $(DEBUG) $(CFLAGS) $(OBJECTS) -o $(NAME) -fsanitize=thread
+	$(GCC) $(DEBUG) $(CFLAGS) $(OBJECTS) -o $(NAME)
 
 %.o: %.c
 	$(GCC) -c $(CFLAGS) $?
