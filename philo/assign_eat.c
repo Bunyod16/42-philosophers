@@ -42,6 +42,7 @@ void	assign_three_eat_rounds(t_settings *settings)
 		}
 		round += 1;
 	}
+	free(fork_sets);
 }
 
 void	assign_two_eat_rounds(t_settings *settings)

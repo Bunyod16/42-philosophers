@@ -11,9 +11,9 @@ int init(int argc, char **argv, t_settings *settings)
 {
 	int i;
 
-	i = -1;
+	i = 0;
 	while (++i < argc)
-		if (!ft_isnum(argv[i]))
+		if (!is_pos_int(argv[i]))
 			return (0);
 	settings->args = argc - 1;
 	settings->philo_num = ft_atoi(argv[1]);        
@@ -60,6 +60,26 @@ void init_eat_rounds(t_settings *settings)
 		assign_three_eat_rounds(settings);
 }
 
+void ft_cleanup(t_settings *settings, pthread_t *threads)
+{
+	int i;
+	
+	i = -1;
+	while (++i < settings->philo_num)
+		free(settings->eat_queue[i]);
+	i = -1;
+	while (++i < settings->philo_num)
+	{
+		pthread_mutex_destroy(&(settings->philos[i]).roundlock);
+		pthread_mutex_destroy(&(settings->philos[i]).fork);
+	}
+	free(settings->eat_queue);
+	free(settings->philos);
+	pthread_mutex_destroy(&(settings->roundlock));
+	pthread_mutex_destroy(&(settings->pen));
+	free(threads);
+}
+
 int main(int argc, char **argv)
 {
 	t_settings	settings;
@@ -93,4 +113,5 @@ int main(int argc, char **argv)
 	i = -1;
 	while (++i < settings.philo_num)
 		pthread_join(threads[i],NULL);
+	ft_cleanup(&settings, threads);
 }
