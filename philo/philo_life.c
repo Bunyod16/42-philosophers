@@ -6,7 +6,7 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/19 18:44:19 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/06 20:20:13 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/11 18:06:38 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,10 @@ void    *life(void *philo_arg)
 			|| (philo->eat_round - 1 % philo->settings->eat_rounds > 0 
 				&& philo->settings->eat_queue[philo->chair][(philo->eat_round - 1 % philo->settings->eat_rounds) - 1] != 0))
 		    {
-			    monitor(philo->last_eaten, time_till_eat(philo, philo->eat_round - 1, false) - (philo->sleep_time / 1000), philo, "is thinking\n");//check without deducting time to sleep on the first round
+                if (philo->eat_round - 1 == 0)
+                    monitor(philo->last_eaten, time_till_eat(philo, philo->eat_round - 1, false), philo, "is thinking\n");//check without deducting time to sleep on the first round
+                else
+                    monitor(philo->last_eaten, time_till_eat(philo, philo->eat_round - 1, false) - (philo->sleep_time / 1000), philo, "is thinking\n");//check without deducting time to sleep on the first round
 			    pen(philo->settings, get_time(), philo->chair, "is thinking\n", 0);
             }
         }
@@ -145,7 +148,6 @@ void    *life(void *philo_arg)
             pthread_mutex_unlock(&(philo->settings->roundlock));
         }
         pthread_mutex_unlock(&(philo->settings->roundlock));
-		pen(philo->settings, get_time(), philo->chair, "is OUT\n", 0);
 	}
     pthread_mutex_lock(&(philo->roundlock));
     philo->eat_round = 999999;

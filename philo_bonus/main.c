@@ -1,11 +1,10 @@
-#include <pthread.h>
 #include <unistd.h>
-#include <stdio.h>
 #include "philo.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <limits.h>
+#include <semaphore.h>
+#include <stdio.h>
 
 int init(int argc, char **argv, t_settings *settings)
 {
@@ -23,6 +22,10 @@ int init(int argc, char **argv, t_settings *settings)
 	settings->philos = malloc(sizeof(t_philo) * settings->philo_num);
 	settings->dead_count = 0;
 	settings->start_time = get_time();
+	sem_unlink("/pen");
+	sem_unlink("/fork_sets");
+	settings->pen = sem_open("/pen",  O_CREAT, 0664, 1); 
+	settings->fork_sets = sem_open("/fork_sets", O_CREAT, 0664, settings->philo_num / 2);
 	if (argc == 6)
 		settings->stop_after = ft_atoi(argv[5]);
 	else 
@@ -57,51 +60,48 @@ void init_eat_rounds(t_settings *settings)
 	if (eat_rounds == 2)
 		assign_two_eat_rounds(settings);
 	else
-		assign_three_eat_rounds(settings);
+		assign_three_eat_rounds(settings, i);
 }
 
-void ft_cleanup(t_settings *settings)
+static void	ft_error_check(int argc, char **argv, t_settings *settings)
 {
-	int i;
-	
-	i = -1;
-	while (++i < settings->philo_num)
-		free(settings->eat_queue[i]);
-	free(settings->eat_queue);
-	free(settings->philos);
+	if (argc < 5 || argc > 6 || !init(argc, argv, settings))
+	{
+		printf("Error: Wrong arguements");
+		exit (0);
+	}
+}
+
+static void init_philo(t_settings *settings, int i)
+{
+	settings->philos[i].chair = i;
+	settings->philos[i].eat_time = settings->eat_time;
+	settings->philos[i].sleep_time = settings->sleep_time;
+	settings->philos[i].settings = settings;
+	settings->philos[i].meals = 0;
+	settings->philos[i].eat_round = 0;
+	settings->philos[i].last_eaten = get_time();
+	settings->philos[i].pid = fork();
 }
 
 int main(int argc, char **argv)
 {
-	t_settings	settings;
+	t_settings		settings;
 	int				i;
-	int				status;
-	pid_t			pid;
-	pid_t			wpid;
 
-	if (argc < 5 || argc > 6 || !init(argc, argv, &settings))
-	{
-		printf("Error: Wrong arguements");
-		return (0);
-	}
+	ft_error_check(argc, argv, &settings);
 	init_eat_rounds(&settings);
 	i = -1;
 	while (++i < settings.philo_num)
 	{
-		settings.philos[i].chair = i;
-		settings.philos[i].eat_time = settings.eat_time;
-		settings.philos[i].sleep_time = settings.sleep_time;
-		settings.philos[i].settings = &settings;
-		settings.philos[i].meals = 0;
-		settings.philos[i].eat_round = 0;
-		settings.philos[i].last_eaten = get_time();
-		pid = fork();
-		if (pid != 0)
+		init_philo(&settings, i);
+		if (settings.philos[i].pid == 0)
+		{
 			life(&(settings.philos[i]));
+			exit (1);
+		}
 	}
-	if (pid == 0)
-		while ((wpid = wait(&status)) > 0);
+	waitpid(-1, NULL, 0);
 	ft_cleanup(&settings);
-	printf("EXITED\n");
 	exit (1);
 }

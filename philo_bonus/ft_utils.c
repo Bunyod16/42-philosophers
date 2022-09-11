@@ -6,7 +6,7 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/20 22:48:16 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/06 20:19:37 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/11 17:40:05 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include "philo.h"
 #include <stdlib.h>
+#include <signal.h>
 
 int ft_isnum(char *str)
 {
@@ -63,10 +64,26 @@ long int	get_time(void)
     return (ret);
 }
 
-void	pen(t_settings *settings, long timestamp, int philo_num, const char *action, int flag)
+void	pen(t_philo *philo, long timestamp, const char *action, int flag)
 {
-	sem_wait(&settings->pen);
-	printf("%ld #%d %s", timestamp - settings->start_time, philo_num, action);
+	sem_wait(philo->settings->pen);
+	printf("%ld #%d %s", timestamp - philo->settings->start_time, philo->chair, action);
 	if (flag == 0)
-		pthread_mutex_unlock(&settings->pen);
+		sem_post(philo->settings->pen);
+}
+
+void ft_cleanup(t_settings *settings)
+{
+	int i;
+	
+	i = -1;
+	while (++i < settings->philo_num)
+		free(settings->eat_queue[i]);
+	free(settings->eat_queue);
+	free(settings->philos);
+	sem_unlink("/fork_sets");
+	sem_unlink("/pen");
+	i = -1;
+	while (++i < settings->philo_num)
+		kill(settings->philos[i].pid, SIGTERM);
 }
