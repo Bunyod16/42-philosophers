@@ -6,7 +6,7 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/19 18:44:19 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/12 16:29:22 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/12 19:40:17 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	monitor(long action_t, t_philo *philo, const char *action)
 
 	if (action_t < 0)
 		action_t = 0;
-	die_at = philo->eat_time + (philo->settings->die_time / 1000);
+	die_at = philo->last_eaten + (philo->settings->die_time / 1000);
 	if (get_time() + action_t > die_at || action_t == LONG_MAX)
 	{
 		if (action != NULL)

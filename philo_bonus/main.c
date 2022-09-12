@@ -6,7 +6,7 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/11 22:46:45 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/11 22:47:37 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/12 19:28:31 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,8 @@ int	main(int argc, char **argv)
 	int				i;
 
 	ft_error_check(argc, argv, &settings);
-	init_eat_rounds(&settings, i);
 	i = -1;
+	init_eat_rounds(&settings, i);
 	while (++i < settings.philo_num)
 	{
 		init_philo(&settings, i);
