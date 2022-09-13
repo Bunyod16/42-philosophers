@@ -46,11 +46,11 @@ test_one ()
 
 test_two ()
 {
-    echo "\e[94m[+] Test #2: Executing your program for 180 second, please wait...\e[0m"
+    echo "\e[94m[+] Test #2: Executing your program for 30 second, please wait...\e[0m"
     ("$2/$1/$1" 4 410 200 200 > /dev/null)&
     i=1
     error=0
-    while [ $i -lt 180 ];do
+    while [ $i -lt 30 ];do
         printf "\r[%d...]" $i
         pgrep $1 > /dev/null
         if [ "$?" -ne 0 ];then
@@ -71,11 +71,11 @@ test_two ()
 
 test_three ()
 {
-    echo "\e[94m[+] Test #3: Executing your program for 180 second, please wait...\e[0m"
+    echo "\e[94m[+] Test #3: Executing your program for 30 second, please wait...\e[0m"
     ("$2/$1/$1" 5 800 200 200 > /dev/null)&
     i=1
     error=0
-    while [ $i -lt 180 ];do
+    while [ $i -lt 30 ];do
         printf "\r[%d...]" $i
         pgrep $1 > /dev/null
         if [ "$?" -ne 0 ];then

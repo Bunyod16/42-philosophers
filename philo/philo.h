@@ -6,7 +6,7 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 19:55:21 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/12 20:56:19 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/13 10:53:57 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,6 @@ void		pen(t_philo *philo, long timestamp, const char *action, int flag);
 int			is_pos_int(char *str);
 void		wait_all_philo_eat(t_philo *philo);
 int			ate_last_round(t_philo *philo);
-static long	next_eat(t_philo *philo);
+long		next_eat(t_philo *philo);
 
 #endif

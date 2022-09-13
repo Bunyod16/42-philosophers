@@ -6,7 +6,7 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/29 02:27:49 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/12 21:05:55 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/13 10:54:16 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ void	assign_many_eat_rounds(t_settings *settings)
 	int	i;
 	int	*fork_sets;
 	int	eater_num;
-	int	round;
 
 	fork_sets = malloc(sizeof(int) * ((settings->philo_num / 2)));
 	i = 0;

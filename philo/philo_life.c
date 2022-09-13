@@ -6,7 +6,7 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/19 18:44:19 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/12 20:42:47 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/13 11:52:22 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,15 @@ void	monitor(long action_t, t_philo *philo, const char *action)
 	if (action_t < 0)
 		action_t = 0;
 	die_at = philo->last_eaten + (philo->settings->die_time / 1000);
-	if (get_time() + action_t > die_at || action_t == LONG_MAX)
+	if (get_time() + action_t > die_at + 2 || action_t == LONG_MAX)
 	{
 		if (action != NULL)
 			pen(philo, get_time(), action, 0);
 		if (action_t != LONG_MAX)
-			usleep((die_at - get_time()) * 1000);
+		{
+			if ((die_at - get_time()) * 1000 > 0)
+				usleep((die_at - get_time()) * 1000);
+		}
 		pen(philo, get_time(), "died\n", 1);
 		exit (3);
 	}
@@ -47,15 +50,13 @@ void	philo_eat(t_philo *philo, t_philo *neighbour, int round)
 	usleep(philo->settings->eat_time);
 	pthread_mutex_unlock(&philo->fork);
 	pthread_mutex_unlock(&neighbour->fork);
-	monitor(philo->sleep_time / 1000, philo, "is sleeping\n");
-	pen(philo, get_time(), "is sleeping\n", 0);
+	pthread_mutex_lock(&(philo->roundlock));
+	philo->eat_round++;
+	pthread_mutex_unlock(&(philo->roundlock));
 	i = philo->settings->philo_num - 1;
 	while (philo->settings->eat_queue[i]
 		[round % philo->settings->eat_rounds] != 1)
 		--i;
-	pthread_mutex_lock(&(philo->roundlock));
-	philo->eat_round++;
-	pthread_mutex_unlock(&(philo->roundlock));
 	if (philo->chair == i)
 	{
 		wait_all_philo_eat(philo);
@@ -86,6 +87,8 @@ void	start_philo(t_philo *p, t_philo *neighbour)
 		{
 			lock_forks(p, neighbour);
 			philo_eat(p, neighbour, p->eat_round);
+			monitor(p->sleep_time / 1000, p, "is sleeping\n");
+			pen(p, get_time(), "is sleeping\n", 0);
 			usleep(p->settings->sleep_time);
 		}
 		else
@@ -93,7 +96,7 @@ void	start_philo(t_philo *p, t_philo *neighbour)
 			if (ate_last_round(p))
 				monitor(next_eat(p) - p->sleep_time / 1000, p, "is thinking\n");
 			else if (p->eat_round == 0)
-				monitor(next_eat(p), p, "is thinking\n");
+				monitor(next_eat(p), p, "is TThinking\n");
 			pen(p, get_time(), "is thinking\n", 0);
 			p->eat_round++;
 		}

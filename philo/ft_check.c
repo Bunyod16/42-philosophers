@@ -6,7 +6,7 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 16:45:53 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/12 20:44:06 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/13 10:53:51 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	ate_last_round(t_philo *philo)
 		[(philo->eat_round - 1) % philo->settings->eat_rounds]);
 }
 
-static long	next_eat(t_philo *philo)
+long	next_eat(t_philo *philo)
 {
 	int	i;
 	int	round;
