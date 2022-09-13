@@ -6,7 +6,7 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 19:55:21 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/13 10:53:57 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/13 15:16:18 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ void		*life(void *philo_arg);
 void		assign_two_eat_rounds(t_settings *settings);
 void		assign_many_eat_rounds(t_settings *settings);
 void		init_eat_rounds(t_settings *settings, int i);
+void		monitor(long action_t, t_philo *philo, const char *action);
 
 // ft_check.c
 void		pen(t_philo *philo, long timestamp, const char *action, int flag);

@@ -6,7 +6,7 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/19 18:44:19 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/13 11:52:22 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/13 15:15:15 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,27 +17,6 @@
 #include "philo.h"
 #include <stdbool.h>
 #include <limits.h>
-
-void	monitor(long action_t, t_philo *philo, const char *action)
-{
-	long	die_at;
-
-	if (action_t < 0)
-		action_t = 0;
-	die_at = philo->last_eaten + (philo->settings->die_time / 1000);
-	if (get_time() + action_t > die_at + 2 || action_t == LONG_MAX)
-	{
-		if (action != NULL)
-			pen(philo, get_time(), action, 0);
-		if (action_t != LONG_MAX)
-		{
-			if ((die_at - get_time()) * 1000 > 0)
-				usleep((die_at - get_time()) * 1000);
-		}
-		pen(philo, get_time(), "died\n", 1);
-		exit (3);
-	}
-}
 
 void	philo_eat(t_philo *philo, t_philo *neighbour, int round)
 {
@@ -78,6 +57,20 @@ void	wait_round_end(t_philo *p)
 	pthread_mutex_unlock(&(p->settings->roundlock));
 }
 
+void	philo_think(t_philo *p)
+{
+	if (ate_last_round(p))
+	{
+		monitor(next_eat(p) - p->sleep_time / 1000, p, "is thinking\n");
+		pen(p, get_time(), "is thinking\n", 0);
+	}
+	else if (p->eat_round == 0)
+	{
+		monitor(next_eat(p), p, "is thinking\n");
+		pen(p, get_time(), "is thinking\n", 0);
+	}
+}
+
 void	start_philo(t_philo *p, t_philo *neighbour)
 {
 	while (p->settings->stop_after == -1 || p->settings->stop_after > p->meals)
@@ -93,11 +86,7 @@ void	start_philo(t_philo *p, t_philo *neighbour)
 		}
 		else
 		{
-			if (ate_last_round(p))
-				monitor(next_eat(p) - p->sleep_time / 1000, p, "is thinking\n");
-			else if (p->eat_round == 0)
-				monitor(next_eat(p), p, "is TThinking\n");
-			pen(p, get_time(), "is thinking\n", 0);
+			philo_think(p);
 			p->eat_round++;
 		}
 		wait_round_end(p);

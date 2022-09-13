@@ -6,12 +6,14 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/29 02:27:49 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/11 22:25:16 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/13 15:23:47 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 #include <stdlib.h>
+#include <limits.h>
+#include <unistd.h>
 
 void	assign_three_eat_rounds(t_settings *settings, int i)
 {
@@ -60,5 +62,23 @@ void	assign_two_eat_rounds(t_settings *settings)
 			else
 				settings->eat_queue[n_philo][round] = 0;
 		}
+	}
+}
+
+void	monitor(long action_t, t_philo *philo, const char *action)
+{
+	long	die_at;
+
+	if (action_t < 0)
+		action_t = 0;
+	die_at = philo->last_eaten + (philo->settings->die_time / 1000);
+	if (get_time() + action_t > die_at || action_t == LONG_MAX)
+	{
+		if (action != NULL)
+			pen(philo, get_time(), action, 0);
+		if (action_t != LONG_MAX)
+			usleep((die_at - get_time()) * 1000);
+		pen(philo, get_time(), "died\n", 1);
+		exit (3);
 	}
 }

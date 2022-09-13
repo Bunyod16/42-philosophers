@@ -6,7 +6,7 @@
 /*   By: bunyodshams <bunyodshams@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/19 18:44:19 by bunyodshams       #+#    #+#             */
-/*   Updated: 2022/09/13 14:52:05 by bunyodshams      ###   ########.fr       */
+/*   Updated: 2022/09/13 15:22:59 by bunyodshams      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,24 +36,6 @@ static long	next_eat(t_philo *philo)
 	return (i * (philo->eat_time / 1000));
 }
 
-void	monitor(long action_t, t_philo *philo, const char *action)
-{
-	long	die_at;
-
-	if (action_t < 0)
-		action_t = 0;
-	die_at = philo->last_eaten + (philo->settings->die_time / 1000);
-	if (get_time() + action_t > die_at || action_t == LONG_MAX)
-	{
-		if (action != NULL)
-			pen(philo, get_time(), action, 0);
-		if (action_t != LONG_MAX)
-			usleep((die_at - get_time()) * 1000);
-		pen(philo, get_time(), "died\n", 1);
-		exit (3);
-	}
-}
-
 void	philo_eat(t_philo *philo)
 {
 	philo->last_eaten = get_time();
@@ -73,6 +55,20 @@ int	ate_last_round(t_philo *philo)
 		[(philo->eat_round - 1) % philo->settings->eat_rounds]);
 }
 
+void	philo_think(t_philo *p)
+{
+	if (ate_last_round(p))
+	{
+		monitor(next_eat(p) - p->sleep_time / 1000, p, "is thinking\n");
+		pen(p, get_time(), "is thinking\n", 0);
+	}
+	else if (p->eat_round == 0)
+	{
+		monitor(next_eat(p), p, "is thinking\n");
+		pen(p, get_time(), "is thinking\n", 0);
+	}
+}
+
 void	life(t_philo *p)
 {
 	monitor(next_eat(p), p, NULL);
@@ -89,11 +85,7 @@ void	life(t_philo *p)
 		}
 		else
 		{
-			if (ate_last_round(p))
-				monitor(next_eat(p) - p->sleep_time / 1000, p, "is thinking\n");
-			else if (p->eat_round == 0)
-				monitor(next_eat(p), p, "is thinking\n");
-			pen(p, get_time(), "is thinking\n", 0);
+			philo_think(p);
 			p->eat_round++;
 		}
 		usleep(next_eat(p));
